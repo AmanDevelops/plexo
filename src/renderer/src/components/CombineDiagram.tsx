@@ -60,17 +60,20 @@ export function CombineDiagram({
         {networks.map((network, index) => {
           const y = (index + 0.5) * (height / networks.length)
           const color = muted ? 'var(--icon-muted)' : network.solid
+          const hasSpeed = network.speedBytesPerSec != null && network.speedBytesPerSec > 0
           return (
             <path
               key={network.label + index}
               d={`M${CURVE_START_X},${y.toFixed(1)} C${CURVE_START_X + 36},${y.toFixed(1)} ${COMBINE_X - 26},${midY.toFixed(1)} ${COMBINE_X},${midY.toFixed(1)}`}
               stroke={color}
               strokeDasharray="6 8"
-              opacity={paused ? 0.55 : 1}
+              opacity={paused ? 0.55 : !hasSpeed ? 0.35 : 1}
               style={
-                muted || paused
+                muted || paused || !hasSpeed
                   ? undefined
-                  : { animation: `plexo-dash ${1.1 + index * 0.2}s linear infinite` }
+                  : { animation: `plexo-dash ${1.1 + index * 0.2}s linear infinite`,
+                      animationPlayState: paused || !hasSpeed ? 'paused' : 'running' 
+              }
               }
             />
           )
